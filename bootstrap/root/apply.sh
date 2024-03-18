@@ -1,11 +1,13 @@
 #!/bin/sh
 
-curl -fks --connect-timeout 5 https://git.khuedoan.com \
-    || extra_args="--values values-seed.yaml"
+VALUES="values.yaml"
+
+kubectl get ingress gitea --namespace gitea \
+    || VALUES="values-seed.yaml"
 
 helm template \
     --include-crds \
     --namespace argocd \
-    ${extra_args} \
+    --values "${VALUES}" \
     argocd . \
     | kubectl apply -n argocd -f -

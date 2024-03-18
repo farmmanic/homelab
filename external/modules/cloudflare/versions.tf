@@ -12,7 +12,7 @@ terraform {
 
     http = {
       source  = "hashicorp/http"
-      version = "~> 2.1.0"
+      version = "~> 3.2.0"
     }
   }
 }
@@ -20,9 +20,4 @@ terraform {
 provider "cloudflare" {
   email   = var.cloudflare_email
   api_key = var.cloudflare_api_key
-}
-
-provider "kubernetes" {
-  # Use KUBE_CONFIG_PATH environment variables
-  # Or in cluster service account
 }

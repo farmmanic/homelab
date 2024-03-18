@@ -4,3 +4,16 @@ module "cloudflare" {
   cloudflare_email      = var.cloudflare_email
   cloudflare_api_key    = var.cloudflare_api_key
 }
+
+module "zerotier" {
+  source                 = "./modules/zerotier"
+  zerotier_central_token = var.zerotier_central_token
+  bridged_routes = [
+    "192.168.1.224/27"
+  ]
+}
+
+module "ntfy" {
+  source = "./modules/ntfy"
+  auth   = var.ntfy
+}

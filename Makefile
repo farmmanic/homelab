@@ -5,9 +5,7 @@
 KUBECONFIG = $(shell pwd)/metal/kubeconfig.yaml
 KUBE_CONFIG_PATH = $(KUBECONFIG)
 
-default: metal bootstrap wait
-
-all: metal bootstrap external wait
+default: metal bootstrap external smoke-test post-install clean
 
 configure:
 	./scripts/configure
@@ -22,15 +20,40 @@ bootstrap:
 external:
 	make -C external
 
-wait:
-	./scripts/wait-main-apps
+smoke-test:
+	make -C test filter=Smoke
+
+post-install:
+	@./scripts/hacks
 
 tools:
-	make -C tools
+	@docker run \
+		--rm \
+		--interactive \
+		--tty \
+		--network host \
+		--env "KUBECONFIG=${KUBECONFIG}" \
+		--volume "/var/run/docker.sock:/var/run/docker.sock" \
+		--volume $(shell pwd):$(shell pwd) \
+		--volume ${HOME}/.ssh:/root/.ssh \
+		--volume ${HOME}/.terraform.d:/root/.terraform.d \
+		--volume homelab-tools-cache:/root/.cache \
+		--volume homelab-tools-nix:/nix \
+		--workdir $(shell pwd) \
+		docker.io/nixos/nix nix --experimental-features 'nix-command flakes' develop
 
-docs:
-	make -C docs
+test:
+	make -C test
+
+clean:
+	docker compose --project-directory ./metal/roles/pxe_server/files down
 
 dev:
 	make -C metal cluster env=dev
 	make -C bootstrap
+
+docs:
+	mkdocs serve
+
+git-hooks:
+	pre-commit install

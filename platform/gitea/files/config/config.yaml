@@ -18,9 +18,6 @@ repositories:
     migrate:
       source: https://github.com/khuedoan/homelab
       mirror: false
-    # TODO create webhook (use a global one?)
-    # webhooks:
-    #   - http://gitea-webhook.tekton-pipelines:3000
   - name: blog
     owner: khuedoan
     migrate:
